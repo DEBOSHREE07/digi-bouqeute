@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>A bouquet for you</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=Caveat:wght@500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #1d1328;
+            --bg2: #3a1f45;
+            --paper: #f7ecdf;
+            --ink: #3b2433;
+            --blush: #f4a9b8;
+            --rose: #e0607e;
+            --gold: #f3cf8a;
+            --text: #fbeef0;
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px)
+        }
+
+        html {
+            scroll-padding-top: env(safe-area-inset-top, 0px);
+            height: 100%
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            height: 100%;
+            background-color: var(--bg);
+            background-image: linear-gradient(rgba(29, 19, 40, .45), rgba(29, 19, 40, .55)), url("images/bg.jpg");
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            color: var(--text);
+            font-family: 'Fraunces', Georgia, serif;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent
+        }
+
+        #petals {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden
+        }
+
+        #petals i {
+            position: absolute;
+            top: -30px;
+            width: 18px;
+            height: 18px;
+            background: var(--blush);
+            border-radius: 150% 0 150% 0;
+            opacity: .7;
+            animation: fall linear infinite
+        }
+
+        @keyframes fall {
+            to {
+                transform: translate(var(--dx), 110vh) rotate(540deg)
+            }
+        }
+
+        .screen {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+            transition: opacity .8s
+        }
+
+        .hide {
+            opacity: 0;
+            pointer-events: none
+        }
+
+        h1 {
+            font-weight: 400;
+            font-size: clamp(1.8rem, 7vw, 2.8rem);
+            margin: 0 0 .4em;
+            line-height: 1.15
+        }
+
+        .hand {
+            font-family: 'Caveat', cursive;
+            font-weight: 500
+        }
+
+        #intro p {
+            max-width: 28ch;
+            opacity: .85;
+            margin: 0 0 1.6em
+        }
+
+        button {
+            font: inherit;
+            color: inherit;
+            cursor: pointer
+        }
+
+        .btn {
+            background: var(--rose);
+            color: #fff;
+            border: 0;
+            border-radius: 999px;
+            padding: .8em 1.6em;
+            font-size: 1.05rem;
+            box-shadow: 0 8px 24px #e0607e55;
+            transition: transform .2s
+        }
+
+        .btn:active {
+            transform: scale(.96)
+        }
+
+        .btn.ghost {
+            background: transparent;
+            border: 1px solid #fbeef066;
+            box-shadow: none
+        }
+
+        .env {
+            width: 150px;
+            height: 100px;
+            background: var(--paper);
+            border-radius: 6px;
+            position: relative;
+            margin-bottom: 28px;
+            box-shadow: 0 14px 30px #0006;
+            animation: bob 3s ease-in-out infinite
+        }
+
+        .env:before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom right, transparent 49.5%, #e6d3c1 50%), linear-gradient(to bottom left, transparent 49.5%, #ecdccb 50%);
+            border-radius: 6px
+        }
+
+        .env:after {
+            content: "♥";
+            position: absolute;
+            left: 50%;
+            top: 46%;
+            transform: translate(-50%, -50%);
+            color: var(--rose);
+            font-size: 1.6rem
+        }
+
+        @keyframes bob {
+            50% {
+                transform: translateY(-8px)
+            }
+        }
+
+        #stage {
+            justify-content: flex-start;
+            padding-top: calc(18px + env(safe-area-inset-top, 0px))
+        }
+
+        #stage .hand {
+            font-size: 1.5rem;
+            margin: 0
+        }
+
+        #count {
+            font-size: .95rem;
+            opacity: .75;
+            margin: .2em 0 0
+        }
+
+        svg#bq {
+            width: min(100%, 430px);
+            max-height: 68vh;
+            flex: 1;
+            overflow: visible
+            transform: translateY(40px);
+        }
+
+        .fl {
+            cursor: pointer;
+            outline: none
+        }
+
+        .fl .bl {
+            transform-box: fill-box;
+            transform-origin: center;
+            transform: scale(0);
+            animation: bloom 1.1s cubic-bezier(.2, 1.4, .4, 1) forwards;
+            animation-delay: var(--d)
+        }
+
+        .fl:hover .bl,
+        .fl:focus-visible .bl {
+            filter: brightness(1.15)
+        }
+
+        .fl.read .core {
+            fill: var(--gold)
+        }
+
+        .pulse {
+            transform-box: fill-box;
+            transform-origin: center;
+            animation: pulse 2s ease-in-out infinite
+        }
+
+        .fl.read .pulse {
+            display: none
+        }
+
+        @keyframes bloom {
+            to {
+                transform: scale(1)
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(.6);
+                opacity: .9
+            }
+
+            100% {
+                transform: scale(1.9);
+                opacity: 0
+            }
+        }
+
+        #bar {
+            position: fixed;
+            top: calc(12px + env(safe-area-inset-top, 0px));
+            right: 14px;
+            display: flex;
+            gap: 8px;
+            z-index: 5
+        }
+
+        #bar button {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #ffffff14;
+            border: 1px solid #ffffff33;
+            font-size: 1.1rem
+        }
+
+        #final {
+            margin-top: 6px
+        }
+
+        .sheet {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            background: #10081899;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .3s;
+            z-index: 10
+        }
+
+        .sheet.open {
+            opacity: 1;
+            pointer-events: auto
+        }
+
+        .card {
+            background: var(--paper);
+            color: var(--ink);
+            width: min(100%, 480px);
+            max-height: 82vh;
+            overflow: auto;
+            border-radius: 22px 22px 0 0;
+            padding: 28px 26px calc(26px + env(safe-area-inset-bottom, 0px));
+            transform: translateY(100%);
+            transition: transform .45s cubic-bezier(.2, .9, .3, 1);
+            text-align: left
+        }
+
+        .sheet.open .card {
+            transform: none
+        }
+
+        .card h2 {
+            margin: 0 0 .3em;
+            font-weight: 600;
+            font-size: 1.3rem
+        }
+
+        .sheet.letter-open .card h2 {
+            color: #9f1239
+        }
+
+        .card p {
+            font-family: 'Caveat', cursive;
+            font-size: 1.65rem;
+            line-height: 1.3;
+            margin: .2em 0 1em;
+            white-space: pre-line
+        }
+
+        .sheet.letter-open .card p {
+            color: #c0264e
+        }
+
+        .card .btn {
+            font-size: .95rem;
+            padding: .6em 1.3em
+        }
+
+        .card .tag {
+            font-size: .8rem;
+            opacity: .6;
+            margin: 0 0 .6em;
+            display: block
+        }
+
+        @media(prefers-reduced-motion:reduce) {
+            * {
+                animation-duration: .01s !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01s !important
+            }
+        }
+
+        #memoryImage {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin: 12px 0 18px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+            background: #2a1e2c;
+            cursor: zoom-in;
+            transition: height .25s ease;
+        }
+
+        #memoryImage:hover,
+        #memoryImage.expanded {
+            height: min(68vh, 560px);
+            object-fit: contain;
+            cursor: zoom-out;
+        }
+
+        #memoryImage:focus-visible {
+            outline: 3px solid var(--rose);
+            outline-offset: 3px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="petals" aria-hidden="true"></div>
+
+    <div id="intro" class="screen">
+        <div class="env" aria-hidden="true"></div>
+        <h1 id="introTitle"></h1>
+        <p>Miles apart, but I grew you something. Tap each flower to open a memory.</p>
+        <button class="btn" id="openBtn">Open your bouquet</button>
+    </div>
+
+    <div id="stage" class="screen hide">
+        <p class="hand" id="stageTitle"></p>
+        <p id="count"></p>
+        <svg id="bq" viewBox="0 0 360 520" role="group" aria-label="Bouquet of memories"></svg>
+        <button class="btn" id="final" hidden>Read my letter</button>
+    </div>
+
+    <div id="bar" class="hide">
+        <button id="mute" aria-label="Toggle music">♪</button>
+    </div>
+    <audio id="bgMusic" src="audio/love-song.mp3" loop preload="auto"></audio>
+
+    <div class="sheet" id="sheet" role="dialog" aria-modal="true">
+        <!-- Card section with image support -->
+        <div class="card">
+            <span class="tag" id="cTag"></span>
+            <h2 id="cTitle"></h2>
+            <img src="" alt="Our picture" id="memoryImage" role="button" tabindex="0"
+                aria-label="Enlarge photo" style="display: none;">
+            <p id="cText"></p>
+            <button class="btn" id="cClose">Keep it close</button>
+        </div>
+    </div>
+
+    <script>
+        /* ============ EDIT THIS PART ============ */
+        const CONFIG = {
+            to: "My love",            // their name or nickname
+            from: "Your name",      // your name
+            flowers: [                // one flower per memory — add or remove as you like (up to 7 fit nicely)
+                { title: "The first time we talked", text: "I didn't know it then, but my whole year just changed direction. I still smile at that first message." },
+                { title: "The first time I saw you", text: "You walked in and everything got quieter. I tried to act normal. I failed." },
+                { title: "Our song", text: "Every time it plays I'm in the same room as you, even if only for three minutes.\n(Press ♪ — I made this one for us.)" },
+                { title: "Your laugh", text: "The one you do when you can't breathe. I'd cross any ocean for that sound." },
+                { title: "A small thing you do", text: "The way you check on me without making it a big deal. I notice. I always notice." },
+                { title: "Something I'm grateful for", text: "That you are patient with the distance, and with me, even on bad days." },
+                { title: "Where we're going", text: "One day there won't be a screen between us. I'm counting down, and I'm so excited." }
+            ],
+            letter: "Dear honey,\n\nDistance is just a number that keeps trying to convince me it matters. It doesn't. Every day I choose you, and every day gets a little easier because you chose me back.\n\nUntil I can hand you real flowers, please keep these ones.\n\nAll my love,"
+        };
+        /* ========================================= */
+
+        const $ = id => document.getElementById(id);
+        $('introTitle').textContent = "For " + CONFIG.to;
+        $('stageTitle').textContent = "a bouquet from " + CONFIG.from;
+
+        /* falling petals */
+        const pet = $('petals');
+        for (let i = 0; i < 32; i++) {
+            const p = document.createElement('i');
+            p.style.left = Math.random() * 100 + '%'; p.style.setProperty('--dx', (Math.random() * 120 - 60) + 'px');
+            p.style.animationDuration = (9 + Math.random() * 9) + 's'; p.style.animationDelay = (-Math.random() * 14) + 's';
+            p.style.opacity = .35 + Math.random() * .4; p.style.transform = 'scale(' + (.6 + Math.random() * .8) + ')'; pet.appendChild(p)
+        }
+
+        /* build bouquet */
+        const NS = "http://www.w3.org/2000/svg", svg = $('bq');
+        const el = (n, a, par) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); (par || svg).appendChild(e); return e };
+        const spots = [[180, 105], [105, 170], [255, 170], [60, 265], [300, 265], [140, 245], [220, 245]];
+        const palettes = [
+            ["#ffb6c8", "#d9365f"],
+            ["#f58aa6", "#b9153f"],
+            ["#ffd0dc", "#e34b70"],
+            ["#ed7894", "#c51f4a"],
+            ["#ffb6c8", "#d9365f"],
+            ["#f58aa6", "#b9153f"],
+            ["#ffd0dc", "#e34b70"]
+        ];
+        const base = [180, 440];
+        const flowers = CONFIG.flowers.slice(0, 7);
+        const read = new Set();
+
+        flowers.forEach((f, i) => {
+            const [x, y] = spots[i];
+            const mx = (x + base[0]) / 2 + (x < 180 ? -18 : 18) * (i % 2 ? 1 : .6), my = (y + base[1]) / 2;
+            el('path', { d: `M${base[0]} ${base[1]} Q${mx} ${my} ${x} ${y}`, stroke: "#7fae7a", 'stroke-width': 4, fill: 'none', 'stroke-linecap': 'round' });
+            el('ellipse', { cx: mx + (x < 180 ? 10 : -10), cy: my + 20, rx: 15, ry: 6, fill: "#8fc088", transform: `rotate(${x < 180 ? -35 : 35} ${mx} ${my})` });
+        });
+        /* paper wrap + ribbon */
+        const wrap = el('g', { transform: 'translate(0 10)' });
+        el('path', { d: "M72 335 L288 335 L214 505 L146 505 Z", fill: "#7b1e32", opacity: .97 }, wrap);
+        el('path', { d: "M72 335 L180 420 L288 335 Z", fill: "#a8334a" }, wrap);
+        el('path', { d: "M180 420 L146 505 M180 420 L214 505", stroke: "#c75b6d", 'stroke-width': 1.5, fill: 'none' }, wrap);
+        el('path', { d: "M180 428 q-30 -26 -34 -2 q4 22 34 2 q30 20 34 -2 q-4 -24 -34 2z", fill: "#b3203a" }, wrap);
+        el('circle', { cx: 180, cy: 428, r: 6, fill: "#e04a5e" }, wrap);
+
+        flowers.forEach((f, i) => {
+            const [x, y] = spots[i], [c1, c2] = palettes[i % palettes.length];
+            const g = el('g', { class: 'fl', transform: `translate(${x} ${y})`, tabindex: 0, role: 'button', 'aria-label': 'Open memory: ' + f.title });
+            const b = el('g', { class: 'bl', style: `--d:${.9 + i * .22}s` }, g);
+            if (i % 2 === 0) {
+                for (let k = 0; k < 8; k++) {
+                    el('path', {
+                        d: 'M0 5 C-8 -2 -10 -15 0 -27 C10 -15 8 -2 0 5Z',
+                        fill: k % 2 ? c1 : c2, opacity: .95,
+                        transform: `rotate(${k * 45})`
+                    }, b);
+                }
+                for (let k = 0; k < 6; k++) {
+                    el('path', {
+                        d: 'M0 4 C-6 -2 -7 -12 0 -21 C7 -12 6 -2 0 4Z',
+                        fill: c1, opacity: .95,
+                        transform: `rotate(${k * 60 + 30})`
+                    }, b);
+                }
+            } else {
+                for (let k = 0; k < 7; k++) {
+                    el('path', {
+                        d: 'M0 6 C-13 2 -17 -10 -10 -20 C-4 -29 7 -27 12 -18 C18 -7 10 3 0 6Z',
+                        fill: k % 2 ? c1 : c2, opacity: .95,
+                        transform: `rotate(${k * 360 / 7}) scale(.88)`
+                    }, b);
+                }
+                for (let k = 0; k < 5; k++) {
+                    el('path', {
+                        d: 'M0 5 C-8 1 -10 -8 -5 -14 C0 -21 8 -17 9 -10 C10 -4 5 2 0 5Z',
+                        fill: c1, opacity: .95,
+                        transform: `rotate(${k * 72 + 18}) scale(.8)`
+                    }, b);
+                }
+                el('path', {
+                    d: 'M-4 3 C-9 -4 3 -12 7 -7 C11 -3 2 1 1 5 C0 8 -5 6 -4 3Z',
+                    fill: c2, stroke: c1, 'stroke-width': 1
+                }, b);
+            }
+            el('circle', { class: 'core', r: 8, fill: "#fff" }, b);
+            el('circle', { class: 'pulse', r: 32, fill: 'none', stroke: "#fff", 'stroke-width': 2 }, b);
+            const open = () => openCard(i, g);
+            g.addEventListener('click', open);
+            g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open() } });
+        });
+
+        function updateCount() {
+            const n = flowers.length;
+            $('count').textContent = read.size < n ? `${read.size} of ${n} memories opened` : 'You opened them all';
+            if (read.size === n) $('final').hidden = false
+        }
+        updateCount();
+
+        let cur = null;
+        function openCard(i, g) {
+            const f = flowers[i]; cur = g;
+            $('cTag').textContent = `Memory ${i + 1} of ${flowers.length}`;
+            $('cTitle').textContent = f.title; $('cText').textContent = f.text;
+
+            const img = $('memoryImage');
+            if (f.image) {
+                img.alt = f.title;
+                img.classList.remove('expanded');
+                img.setAttribute('aria-label', 'Enlarge photo: ' + f.title);
+                img.src = f.image;
+                img.style.display = 'block';
+            } else {
+                img.style.display = 'none';
+                img.removeAttribute('src');
+            }
+
+            $('cClose').textContent = "Keep it close"; $('sheet').classList.add('open')
+        }
+        function closeCard() {
+            $('sheet').classList.remove('open', 'letter-open');
+            if (cur) { const idx = [...svg.querySelectorAll('.fl')].indexOf(cur); cur.classList.add('read'); read.add(idx); updateCount(); cur = null }
+            if (letterOpen) letterOpen = false
+        }
+        $('cClose').onclick = closeCard;
+        $('sheet').addEventListener('click', e => { if (e.target.id === 'sheet') closeCard() });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCard() });
+
+        function toggleImageSize() {
+            const img = $('memoryImage');
+            img.classList.toggle('expanded');
+            img.setAttribute('aria-label', img.classList.contains('expanded') ? 'Shrink photo' : 'Enlarge photo');
+        }
+        $('memoryImage').addEventListener('click', toggleImageSize);
+        $('memoryImage').addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleImageSize();
+            }
+        });
+
+        let letterOpen = false;
+        $('final').onclick = () => {
+            letterOpen = true; cur = null;
+            $('cTag').textContent = "One more thing"; $('cTitle').textContent = "A letter for you";
+            $('cText').textContent = CONFIG.letter + "\n" + CONFIG.from + " ♥";
+            $('sheet').classList.add('letter-open');
+            $('memoryImage').style.display = 'none';
+            $('memoryImage').classList.remove('expanded');
+            $('memoryImage').removeAttribute('src');
+            $('cClose').textContent = "Close"; $('sheet').classList.add('open')
+        };
+
+        const music = $('bgMusic');
+        let playing = false;
+        function updateMusicButton() {
+            $('mute').style.opacity = playing ? 1 : .45;
+            $('mute').setAttribute('aria-label', playing ? 'Pause music' : 'Play music');
+            $('mute').title = playing ? 'Pause music' : 'Play music';
+        }
+        async function startMusic() {
+            try {
+                await music.play();
+                playing = true;
+                updateMusicButton();
+            } catch (error) {
+                console.error('Unable to play audio/love-song.mp3:', error);
+                $('mute').setAttribute('aria-label', 'Music could not be played. Click to retry.');
+                $('mute').title = 'Music could not be played. Check audio/love-song.mp3.';
+            }
+        }
+        function stopMusic() {
+            music.pause();
+            playing = false;
+            updateMusicButton();
+        }
+        $('mute').onclick = () => playing ? stopMusic() : startMusic();
+
+        $('openBtn').onclick = () => {
+            startMusic(); $('intro').classList.add('hide');
+            $('stage').classList.remove('hide'); $('bar').classList.remove('hide')
+        };
+    </script>
+</body>
+
+</html>
